@@ -1,19 +1,21 @@
 import os, urllib2, re, simplejson, urlparse
 from bs4 import BeautifulSoup
-from flask import Flask
 from pymongo import Connection
+from flask import Flask
+from flask import render_template
 
 app = Flask(__name__)
  
 MONGO_URL = os.environ.get('MONGOHQ_URL')
  
+# check to see if the MONGO_URL exists, otherwise just connect locally
 if MONGO_URL:
     connection = Connection(MONGO_URL)
     db = connection[urlparse.urlparse(MONGO_URL).path[1:]]
 else:
     connection = Connection('localhost', 27017)
     db = connection['wanted_suspects']
- 
+
 
 @app.route('/')
 def index():
@@ -22,26 +24,33 @@ def index():
     st = "<ul>"
     for suspect in suspects['suspects']:
         st += '<li><img src="' +suspect['img'] + '">' + suspect['name'] + '</li>'
-    return st + '</ul>'
-    
+#     return st + '</ul>'
+    return render_template('hello.html',suspects=suspects)
+   
+# this route provides the raw suspects json blog
 @app.route('/json')
 def json():
-    fo = open("foo.txt", "r+")
-    return fo.read(), 200, {'Content-Type': 'text/plain'}
+    suspect_data = db.suspects.find_one({'data':'suspects'})['json']
+    # return the json as plaintext
+    return suspect_data, 200, {'Content-Type': 'text/plain'}
     
+# used to update the database, run every Monday morning using the Temporize Scheduler add-on in Heroku
 @app.route('/updatelist')
 def update():
-    soup = BeautifulSoup(urllib2.urlopen('http://www.pcstips.com/wanteds.aspx?PageNum=1').read())
-
+    page_num_stuff = BeautifulSoup(urllib2.urlopen('http://www.pcstips.com/wanteds.aspx?PageNum=1').read())
     wanted_suspects = []
     
-    find = soup.body.findAll(text = re.compile('Page 1 of'), limit=1)
+    find = page_num_stuff.body.findAll(text = re.compile('Page 1 of'), limit=1)
     pages = find[0].split()
     pagenums = int(pages[len(pages)-1])
     json_str = '{"suspects":[';
     # get all pages of results and store them in the wanted_suspects list
     for page in range(pagenums):
-        soup = BeautifulSoup(urllib2.urlopen('http://www.pcstips.com/wanteds.aspx?PageNum=' + str(page+1)).read())
+        # prevent a redundant url call since we already grabbed the first page to check the number of pages
+        if (page == 0):
+            soup = page_num_stuff
+        else:
+            soup = BeautifulSoup(urllib2.urlopen('http://www.pcstips.com/wanteds.aspx?PageNum=' + str(page+1)).read())
         print page
         #find the stuff for each suspect
         for table in soup.find(id="styles").find_all("table"):
@@ -61,24 +70,20 @@ def update():
                         weight = demo_table.find(text=re.compile('Weight')).parent.parent.next_sibling.string.strip()
                         hair_color = demo_table.find(text=re.compile('Hair')).parent.parent.next_sibling.string.strip()
                         eye_color = demo_table.find(text=re.compile('Eyes')).parent.parent.next_sibling.string.strip()
-                        json_str += '{"name": "' + str(name) + '", "img": "' +   str(img) + '", "link": "' + str(link) + '", "wanted_date": "' + str(wanted_date) +'", "alias": "'+ str(alias) + '", "gender": "' + str(gender) + '", "race" : "' + str(race) +'", "dob" : "' + str(dob) + '", "height": "' +str(height) +'", "weight": "' + str(weight) + '", "hair_color": "' + str(hair_color) + '", "eye_color": "' + str(eye_color) + '"},'
+                        charges = table.find("font").string
+                        json_str += '{"name": "' + str(name) + '", "charges": "' + str(charges) + '", "img": "' +   str(img) + '", "link": "' + str(link) + '", "wanted_date": "' + str(wanted_date) +'", "alias": "'+ str(alias) + '", "gender": "' + str(gender) + '", "race" : "' + str(race) +'", "dob" : "' + str(dob) + '", "height": "' +str(height) +'", "weight": "' + str(weight) + '", "hair_color": "' + str(hair_color) + '", "eye_color": "' + str(eye_color) + '"},'
+
+    # I should probably find a better way to do this than manually writing out the JSON, but it works for now                        
     json_str = json_str[0:len(json_str)-1] + ']}'
     data = db.suspects.find_one({'data':'suspects'})
+
     if not data:
         data = {'data':'suspects', 'json':json_str}
     else:
         data['json'] = json_str
     db.suspects.save(data)
-    # f = open("foo.txt", "wb")
-#     f.write(json_str);
-#     
-#     # Close opend file
-#     f.close()
-#     
-#     
-#     fo = open("foo.txt", "r+")
-#     js = simplejson.loads(fo.read())
-#     print js['suspects'][0]['name']
-#     
-#     fo.close()
-    return "Done."
+    return "Done", 200, {'Content-Type' : 'text/plain'}
+    
+    
+    
+    
