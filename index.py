@@ -1,13 +1,24 @@
 import os, urllib2, re, simplejson
 from bs4 import BeautifulSoup
 from flask import Flask
+from pymongo import Connection
 
 app = Flask(__name__)
+ 
+MONGO_URL = os.environ.get('MONGOHQ_URL')
+ 
+if MONGO_URL:
+    connection = Connection(MONGO_URL)
+    db = connection[urlparse(MONGO_URL).path[1:]]
+else:
+    connection = Connection('localhost', 27017)
+    db = connection['wanted_suspects']
+ 
 
 @app.route('/')
 def index():
-    fo = open("foo.txt", "r+")
-    suspects = simplejson.loads(fo.read())
+    suspect_data = db.suspects.find_one({'data':'suspects'})['json']
+    suspects = simplejson.loads(suspect_data)
     st = "<ul>"
     for suspect in suspects['suspects']:
         st += '<li><img src="' +suspect['img'] + '">' + suspect['name'] + '</li>'
@@ -52,16 +63,22 @@ def update():
                         eye_color = demo_table.find(text=re.compile('Eyes')).parent.parent.next_sibling.string.strip()
                         json_str += '{"name": "' + str(name) + '", "img": "' +   str(img) + '", "link": "' + str(link) + '", "wanted_date": "' + str(wanted_date) +'", "alias": "'+ str(alias) + '", "gender": "' + str(gender) + '", "race" : "' + str(race) +'", "dob" : "' + str(dob) + '", "height": "' +str(height) +'", "weight": "' + str(weight) + '", "hair_color": "' + str(hair_color) + '", "eye_color": "' + str(eye_color) + '"},'
     json_str = json_str[0:len(json_str)-1] + ']}'
-    f = open("foo.txt", "wb")
-    f.write(json_str);
-    
-    # Close opend file
-    f.close()
-    
-    
-    fo = open("foo.txt", "r+")
-    js = simplejson.loads(fo.read())
-    print js['suspects'][0]['name']
-    
-    fo.close()
+    data = db.suspects.find_one({'data':'suspects'})
+    if not data:
+        data = {'data':'suspects', 'json':json_str}
+    else:
+        data['json'] = json_str
+    db.suspects.save(data)
+    # f = open("foo.txt", "wb")
+#     f.write(json_str);
+#     
+#     # Close opend file
+#     f.close()
+#     
+#     
+#     fo = open("foo.txt", "r+")
+#     js = simplejson.loads(fo.read())
+#     print js['suspects'][0]['name']
+#     
+#     fo.close()
     return "Done."
