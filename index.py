@@ -1,4 +1,4 @@
-import os, urllib2, re, simplejson
+import os, urllib2, re, simplejson, urlparse
 from bs4 import BeautifulSoup
 from flask import Flask
 from pymongo import Connection
@@ -9,7 +9,7 @@ MONGO_URL = os.environ.get('MONGOHQ_URL')
  
 if MONGO_URL:
     connection = Connection(MONGO_URL)
-    db = connection[urlparse(MONGO_URL).path[1:]]
+    db = connection[urlparse.urlparse(MONGO_URL).path[1:]]
 else:
     connection = Connection('localhost', 27017)
     db = connection['wanted_suspects']
