@@ -12,7 +12,32 @@ body{
     padding: 0 15px 0 0;
 }
 
+.suspects h3{
+    margin-top: -5px;
+}
+
 .suspects li .thumbnail{
     height: 210px;
     padding-right: 15px;
+}
+
+.suspect_page{
+    text-align: center;
+}
+
+.suspect_page h1{
+    color: red;
+    font-size: 9em;
+    line-height: 1em;
+    margin: 20px 0;
+}
+
+.suspect_page h2{
+    color: #000;
+    font-size: 6em;
+    line-height: 1em;
+}
+
+.suspect_page img{
+    margin: 15px 0;
 }
