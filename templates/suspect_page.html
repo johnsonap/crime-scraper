@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+
+<html lang="en">
+<head>
+    <title>Hello from Flask</title>
+    <link rel="stylesheet" href="/static/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="/static/bootstrap-responsive.min.css" type="text/css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/static/style.css" type="text/css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="span12">
+                {% set found = []   %} 
+                    {% if suspects %}
+                        {% for suspect in suspects.suspects %} 
+                            {% if suspect_name == suspect.name %} 
+                                {% do found.append(1) %}
+                                <a href="/">&lt;&lt; Back</a>
+                                <h1>{{ suspect_name }}</h1>
+                                <p>Charges: {{suspect.charges}}</p>
+                                <p>Gender: {{suspect.gender}}</p>
+                                <p>Race: {{suspect.race}}</p>
+                                <p>Eye Color: {{suspect.eye_color}}</p>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if not found  %}
+                            <h1>Oops!</h1>
+                            <p>That suspect couldn't be found.</p>
+                            <p><a href="/">Head on back</a> 
+                        {%endif%} 
+               
+                    {% endif %}
+            </div>
+        </div>
+    </div><script src="http://code.jquery.com/jquery.js" type="text/javascript">
+</script><script src="static/bootstrap.min.js" type="text/javascript">
+</script>
+</body>
+</html>

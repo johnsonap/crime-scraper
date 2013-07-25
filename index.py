@@ -5,9 +5,9 @@ from flask import Flask
 from flask import render_template
 
 app = Flask(__name__)
- 
+# provides the do statement for figuring out if suspect exists in suspect json in templates
+app.jinja_env.add_extension('jinja2.ext.do')
 MONGO_URL = os.environ.get('MONGOHQ_URL')
- 
 # check to see if the MONGO_URL exists, otherwise just connect locally
 if MONGO_URL:
     connection = Connection(MONGO_URL)
@@ -16,30 +16,30 @@ else:
     connection = Connection('localhost', 27017)
     db = connection['wanted_suspects']
 
-
+# get the blob from the database it, parse it with simplejson, spit it into a template
 @app.route('/')
 def index():
+    suspect_data = simplejson.loads(db.suspects.find_one({'data':'suspects'})['json'])
+    return render_template('index.html',suspects=suspect_data)
+
+# individual suspect pages, some hackery involved in the template because I'm passing in the whole suspect json blob
+@app.route('/suspect/<suspect_name>')
+def suspect_page(suspect_name=None):
     suspect_data = db.suspects.find_one({'data':'suspects'})['json']
     suspects = simplejson.loads(suspect_data)
-    st = "<ul>"
-    for suspect in suspects['suspects']:
-        st += '<li><img src="' +suspect['img'] + '">' + suspect['name'] + '</li>'
-#     return st + '</ul>'
-    return render_template('hello.html',suspects=suspects)
+    return render_template('suspect_page.html',suspects=suspects,suspect_name=suspect_name)
    
-# this route provides the raw suspects json blog
+# this route provides the raw suspects json blog in plain-text
 @app.route('/json')
 def json():
     suspect_data = db.suspects.find_one({'data':'suspects'})['json']
-    # return the json as plaintext
     return suspect_data, 200, {'Content-Type': 'text/plain'}
     
 # used to update the database, run every Monday morning using the Temporize Scheduler add-on in Heroku
 @app.route('/updatelist')
 def update():
     page_num_stuff = BeautifulSoup(urllib2.urlopen('http://www.pcstips.com/wanteds.aspx?PageNum=1').read())
-    wanted_suspects = []
-    
+    wanted_suspects = []  
     find = page_num_stuff.body.findAll(text = re.compile('Page 1 of'), limit=1)
     pages = find[0].split()
     pagenums = int(pages[len(pages)-1])

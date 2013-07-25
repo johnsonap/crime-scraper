@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Hello from Flask</title>
+    <link rel="stylesheet" href="/static/bootstrap.min.css" type="text/css"/> 
+    <link rel="stylesheet" href="/static/bootstrap-responsive.min.css" type="text/css"/> 
+    <link rel="stylesheet" href="/static/style.css" type="text/css"/> 
+    
+</head>
+<body>
+    <div class="container">
+    <div class="row">
+    <div class="span12">
+    {% if suspects %}
+        <ul class="thumbnails suspects">
+        {% for suspect in suspects.suspects %}
+            <li class="span4">
+                <div class="thumbnail">
+                    <img width="168px" height="210px" src="{{ suspect.img }}" alt="{{ suspect.name }}">
+                    <h3><a href="/suspect/{{suspect.name}}">{{ suspect.name }}</a></h3>
+                    <p>Charges: {{suspect.charges}}</p>                    
+                
+                </div>
+            
+            
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+      <h1>Hello World!</h1>
+    {% endif %}
+    </div></div></div>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="static/bootstrap.min.js"></script>
+</body>
+</html>
