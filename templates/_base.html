@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>{% block title%}{% endblock %} - Crime Stoppers</title>
+    <link rel="stylesheet" href="/static/bootstrap.min.css" type="text/css"/> 
+    <link rel="stylesheet" href="/static/bootstrap-responsive.min.css" type="text/css"/> 
+    <link rel="stylesheet" href="/static/style.css" type="text/css"/> 
+    
+</head>
+<body>
+    <div class="navbar navbar-inverse">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="brand" href="#">Crime Stoppers Bay County</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            {% block content%}
+    
+            {% endblock %}
+        </div>
+
+            <div class="footer"><small>
+            <span class="footer-left">By Andrew P. Johnson - <span class="muted">Source: <a href="http://pcstips.com/wanteds.aspx">Panhandle Crime Stoppers</a></span></span>
+            <span class="footer-right">&copy; 2013</span> </small>
+            </div>
+    </div>
+
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="static/bootstrap.min.js"></script>
+</body>
+</html>

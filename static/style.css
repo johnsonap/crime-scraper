@@ -1,8 +1,16 @@
 body{
-    padding-top: 20px;
+
     font-family: 'Open Sans', sans-serif;
     font-weight: 300;
 	color: #777;
+}
+
+.navbar-inner {
+    border-radius: 0px;
+    text-align: center;
+}
+.navbar .brand {
+    float: none;
 }
 
 .suspects img{
@@ -11,6 +19,7 @@ body{
     float: left;
     padding: 0 15px 0 0;
 }
+
 
 .suspects h3{
     margin-top: -5px;
@@ -40,4 +49,22 @@ body{
 
 .suspect_page img{
     margin: 15px 0;
+}
+
+.breadcrumb{
+    text-align: left;
+}
+
+/*  footer stuff */
+
+.footer{
+    border-top: 1px solid #ccc;
+    padding: 20px 0;
+    margin: 20px 0;
+}
+
+.footer-right{
+    text-align: right;
+    display: block;
+    float: right;
 }
