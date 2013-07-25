@@ -1,4 +1,4 @@
-import os, urllib2, re, simplejson, urlparse
+import os, urllib2, re, simplejson, urlparse, datetime
 from bs4 import BeautifulSoup
 from pymongo import Connection
 from flask import Flask
@@ -69,12 +69,13 @@ def update():
                         gender = demo_table.find(text=re.compile('Sex')).parent.parent.next_sibling.string.strip()
                         race = demo_table.find(text=re.compile('Race')).parent.parent.next_sibling.string.strip()
                         dob = demo_table.find(text=re.compile('DOB')).parent.parent.next_sibling.string.strip()
+                        approximate_age = datetime.date.today().year - datetime.date(int(dob.split('/')[1]),int(dob.split('/')[0]),1).year
                         height = demo_table.find(text=re.compile('Height')).parent.parent.next_sibling.string.strip()
                         weight = demo_table.find(text=re.compile('Weight')).parent.parent.next_sibling.string.strip()
                         hair_color = demo_table.find(text=re.compile('Hair')).parent.parent.next_sibling.string.strip()
                         eye_color = demo_table.find(text=re.compile('Eyes')).parent.parent.next_sibling.string.strip()
                         charges = table.find("font").string
-                        json_str += '{"name": "' + str(name) + '", "charges": "' + str(charges) + '", "img": "' +   str(img) + '", "link": "' + str(link) + '", "wanted_date": "' + str(wanted_date) +'", "alias": "'+ str(alias) + '", "gender": "' + str(gender) + '", "race" : "' + str(race) +'", "dob" : "' + str(dob) + '", "height": "' +str(height) +'", "weight": "' + str(weight) + '", "hair_color": "' + str(hair_color) + '", "eye_color": "' + str(eye_color) + '"},'
+                        json_str += '{"name": "' + str(name) + '", "charges": "' + str(charges) + '", "img": "' +   str(img) + '", "link": "' + str(link) + '", "approximate_age": "' + str(approximate_age) + '", "wanted_date": "' + str(wanted_date) +'", "alias": "'+ str(alias) + '", "gender": "' + str(gender) + '", "race" : "' + str(race) +'", "dob" : "' + str(dob) + '", "height": "' +str(height) +'", "weight": "' + str(weight) + '", "hair_color": "' + str(hair_color) + '", "eye_color": "' + str(eye_color) + '"},'
 
     # I should probably find a better way to do this than manually writing out the JSON, but it works for now                        
     json_str = json_str[0:len(json_str)-1] + ']}'

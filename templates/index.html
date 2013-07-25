@@ -5,22 +5,21 @@
 {% block content %}
             <div class="span12">
             {% if suspects %}
+                <div class="intro"><h1>Wanted Suspects in Bay County</h1><p>Information on Wanted Suspects in the panhandle from the <a href="http://pcstips.com/">Panhandle Crime Stoppers</a>. If you have any information, you can <a href="https://www.tipsubmit.com/WebTips.aspx?AgencyID=275" target="_blank">submit a tip online</a> or call Crime Stoppers at <a href="tel:18507858477">(850) 785-TIPS</a>, or toll free at <a href="tel:18669638477">1-866-963-8477</a>.</p></div>
                 <ul class="thumbnails suspects">
                 {% for suspect in suspects.suspects %}
                     <li class="span4">
                         <div class="thumbnail">
                             <img width="168px" height="210px" src="{{ suspect.img }}" alt="{{ suspect.name }}">
                             <h3><a href="/suspect/{{suspect.name}}">{{ suspect.name }}</a></h3>
-                            <p><b>Charged With -</b><br/>{{suspect.charges}}</p>                    
-                        
+                            <p><b>Charged With -</b><br/>{{suspect.charges}}</p>                         
                         </div>
-                    
-                    
                     </li>
                 {% endfor %}
                 </ul>
             {% else %}
-              <h1>Hello World!</h1>
+              <h1>Hooray!</h1>
+              <p>It looks like there are no wanted suspects at the moment</p>
             {% endif %}
             </div>
             

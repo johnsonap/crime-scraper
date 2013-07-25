@@ -15,7 +15,7 @@
                                 <h1>WANTED</h1>
                                 <h2>{{ suspect_name }}</h2>
                                 <img src="{{suspect.img}}" />
-                                <p>{{ suspect_name }} is a {% filter lower %} {{suspect.race}} {{suspect.gender }} with {{suspect.eye_color }} eyes and {{suspect.hair_color}} hair.{% endfilter %} {{ suspect_name }} is wanted for {{ suspect.charges }}</p>
+                                <p>{{ suspect_name }} is a {% filter lower %} {{suspect.race}} {{suspect.gender }}, approximately {{suspect.approximate_age}} years old, with {{suspect.eye_color }} eyes and {{suspect.hair_color}} hair.{% endfilter %} {{ suspect_name }} is wanted for {{ suspect.charges }}</p>
                                 <p> If you have any information involving this crime or any persons involved, <a href="{{suspect.link }}"  target="_blank">submit a tip online</a>, or call Crime Stoppers at <a href="tel:18507858477">(850) 785-TIPS</a>, or toll free at <a href="tel:18669638477">1-866-963-8477</a>.
                                 
                             {% endif %}

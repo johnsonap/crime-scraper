@@ -13,6 +13,14 @@ body{
     float: none;
 }
 
+.intro{
+    padding: 10px 20px 20px;
+}
+
+.intro h1{
+    margin: 15px 0;
+}
+
 .suspects img{
     width:168px;
     height: 210px;
@@ -22,12 +30,15 @@ body{
 
 
 .suspects h3{
-    margin-top: -5px;
+    margin-top: 0px;
 }
 
 .suspects li .thumbnail{
     height: 210px;
     padding-right: 15px;
+    border-radius: 0;
+    margin-bottom: 10px;
+
 }
 
 .suspect_page{
