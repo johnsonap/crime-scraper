@@ -7,6 +7,7 @@ from flask import render_template
 app = Flask(__name__)
 # provides the do statement for figuring out if suspect exists in suspect json in templates
 app.jinja_env.add_extension('jinja2.ext.do')
+
 MONGO_URL = os.environ.get('MONGOHQ_URL')
 # check to see if the MONGO_URL exists, otherwise just connect locally
 if MONGO_URL:
@@ -25,6 +26,7 @@ def index():
 # individual suspect pages, some hackery involved in the template because I'm passing in the whole suspect json blob
 @app.route('/suspect/<suspect_name>')
 def suspect_page(suspect_name=None):
+    # need to sanitize name input
     suspect_data = db.suspects.find_one({'data':'suspects'})['json']
     suspects = simplejson.loads(suspect_data)
     return render_template('suspect_page.html',suspects=suspects,suspect_name=suspect_name)
@@ -57,6 +59,7 @@ def update():
             if( table.attrs == {'width': '100%', 'style': 'table-layout: fixed;bborder-collapse:collapse;', 'border': '1'}):
                 for inside_table in table.find_all("table"):
                     if( inside_table.attrs == {'bgcolor': '#eeeeee', 'style': 'border-collapse:collapse', 'border': '1', 'width': '100%'}):
+                        # need to sanitize these scrapes
                         demo_table = inside_table.parent.parent.parent.parent.table.next_sibling
                         wanted_date = str(inside_table.parent.parent.parent.tr.td.center).split("</b>")[1].split("</center")[0]
                         img = "http://www.pcstips.com/" + inside_table.parent.parent.parent.parent.find_previous_sibling("td").a.get("href")
@@ -76,7 +79,6 @@ def update():
     # I should probably find a better way to do this than manually writing out the JSON, but it works for now                        
     json_str = json_str[0:len(json_str)-1] + ']}'
     data = db.suspects.find_one({'data':'suspects'})
-
     if not data:
         data = {'data':'suspects', 'json':json_str}
     else:
