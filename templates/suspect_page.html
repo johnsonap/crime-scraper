@@ -1,33 +1,36 @@
 {% extends "_base.html" %}
 {% block title%} {{ suspect_name }} {% endblock%}
 {% block content %}
-            <div class="suspect_page">
-                <div class="span6 offset3">
-                {% set found = []   %} 
-                    {% if suspects %}
-                        {% for suspect in suspects.suspects %} 
-                            {% if suspect_name == suspect.name %} 
-                                {% do found.append(1) %}
-                                <ul class="breadcrumb">
-                                  <li><a href="/">Suspects</a> <span class="divider">/</span></li>
-                                  <li class="active">{{ suspect.name }}</li>
-                                </ul>
-                                <h1>WANTED</h1>
-                                <h2>{{ suspect_name }}</h2>
-                                <img src="{{suspect.img}}" />
-                                <p>{{ suspect_name }} is a {% filter lower %} {{suspect.race}} {{suspect.gender }}, approximately {{suspect.approximate_age}} years old, with {{suspect.eye_color }} eyes and {{suspect.hair_color}} hair.{% endfilter %} {{ suspect_name }} is wanted for {{ suspect.charges }}</p>
-                                <p> If you have any information involving this crime or any persons involved, <a href="{{suspect.link }}"  target="_blank">submit a tip online</a>, or call Crime Stoppers at <a href="tel:18507858477">(850) 785-TIPS</a>, or toll free at <a href="tel:18669638477">1-866-963-8477</a>.
-                                
-                            {% endif %}
-                        {% endfor %}
+    <div class="suspect_page">
+        <div class="span6 offset3">
+        
+        {% set found = []   %} 
+        
+        {% if suspects %}
+            {% for suspect in suspects.suspects %} 
+                {% if suspect_name == suspect.name %} 
+                    <!-- janky way of detecting whether the suspect exists in the json -->
+                    {% do found.append(1) %}
+                    <ul class="breadcrumb">
+                      <li><a href="/">Suspects</a> <span class="divider">/</span></li>
+                      <li class="active">{{ suspect.name }}</li>
+                    </ul>
+                    <h1>WANTED</h1>
+                    <h2>{{ suspect_name }}</h2>
+                    <img src="{{suspect.img}}" />
+                    <p>{{ suspect_name }} is a {% filter lower %} {{suspect.race}} {{suspect.gender }}, approximately {{suspect.approximate_age}} years old, with {{suspect.eye_color }} eyes and {{suspect.hair_color}} hair.{% endfilter %} {{ suspect_name }} is wanted for {{ suspect.charges }}</p>
+                    <p> If you have any information involving this crime or any persons involved<br/><h4> <a href="{{suspect.link }}"  target="_blank">submit a tip online</a></h4> or call Crime Stoppers at <a href="tel:18507858477">(850) 785-TIPS</a>, or toll free at <a href="tel:18669638477">1-866-963-8477</a>.
+                    
+                {% endif %}
+            {% endfor %}
 
-                        {% if not found  %}
-                            <h1>Oops!</h1>
-                            <p>That suspect couldn't be found.</p>
-                            <p><a href="/">Head on back</a> 
-                        {%endif%} 
-               
-                    {% endif %}
-                            </div>
-                            </div>
+            {% if not found  %}
+                <h1>Oops!</h1>
+                <p>That suspect couldn't be found.</p>
+                <p><a href="/">Head on back</a> 
+            {%endif%} 
+   
+        {% endif %}
+        </div>
+    </div>
 {% endblock %}
